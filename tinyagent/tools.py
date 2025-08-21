@@ -1,4 +1,4 @@
-"""Tool system for BitterAgent."""
+"""Tool system for TinyAgent."""
 from __future__ import annotations
 
 import asyncio

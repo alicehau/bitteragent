@@ -1,4 +1,4 @@
-# BitterAgent - Minimal Python CLI Agent
+# TinyAgent - Minimal Python CLI Agent
 
 A ultra-minimal, extensible Python CLI agent with native tools for shell execution and file operations.
 
@@ -14,14 +14,14 @@ A ultra-minimal, extensible Python CLI agent with native tools for shell executi
 ### Project Structure
 
 ```
-bitteragent/
+tinyagent/
 ├── pyproject.toml          # Modern Python packaging with uv
 ├── uv.lock                 # Lock file for reproducible builds
 ├── README.md               # This file
 ├── .env.example            # API key configuration
 ├── .python-version        # Python version for uv
 ├── system.md               # Default system prompt (optional)
-├── bitteragent/
+├── tinyagent/
 │   ├── __init__.py
 │   ├── __main__.py        # CLI entry point
 │   ├── agent.py           # Core agent loop & conversation
@@ -197,8 +197,8 @@ Following patterns from analyzed agents (Codex, Gemini CLI, Goose):
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Clone the repository
-git clone https://github.com/yourusername/bitteragent.git
-cd bitteragent
+git clone https://github.com/yourusername/tinyagent.git
+cd tinyagent
 
 # Install dependencies with uv
 uv sync
@@ -212,19 +212,19 @@ cp .env.example .env
 
 ```bash
 # Interactive chat
-uv run bitteragent chat
+uv run tinyagent chat
 
 # Run single command
-uv run bitteragent run "Create a Python hello world script"
+uv run tinyagent run "Create a Python hello world script"
 
 # List available tools
-uv run bitteragent tools
+uv run tinyagent tools
 
 # With specific model
-uv run bitteragent chat --model claude-3-opus-20240229
+uv run tinyagent chat --model claude-3-opus-20240229
 
 # With custom system prompt
-uv run bitteragent chat --system-prompt ./custom-prompt.md
+uv run tinyagent chat --system-prompt ./custom-prompt.md
 ```
 
 ## Configuration
@@ -232,10 +232,10 @@ uv run bitteragent chat --system-prompt ./custom-prompt.md
 ```bash
 # .env file
 ANTHROPIC_API_KEY=your-api-key-here
-BITTERAGENT_MODEL=claude-3-opus-20240229
-BITTERAGENT_SYSTEM_PROMPT=./system.md
-BITTERAGENT_MAX_RETRIES=3
-BITTERAGENT_TIMEOUT=120
+TINYAGENT_MODEL=claude-3-opus-20240229
+TINYAGENT_SYSTEM_PROMPT=./system.md
+TINYAGENT_MAX_RETRIES=3
+TINYAGENT_TIMEOUT=120
 ```
 
 ### System Prompt (system.md)

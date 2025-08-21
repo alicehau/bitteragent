@@ -1,4 +1,4 @@
-"""BitterAgent package initialization."""
+"""TinyAgent package initialization."""
 
 from .agent import Agent
 from .tools import Tool, ToolRegistry, ToolResult

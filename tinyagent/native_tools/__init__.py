@@ -1,4 +1,4 @@
-"""Native tools for BitterAgent."""
+"""Native tools for TinyAgent."""
 
 from .shell import ShellTool
 from .file_ops import ReadFileTool, WriteFileTool, EditFileTool

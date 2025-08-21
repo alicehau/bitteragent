@@ -1,5 +1,5 @@
 [project]
-name = "bitteragent"
+name = "tinyagent"
 version = "0.1.0"
 description = "Minimal Python CLI agent"
 requires-python = ">=3.11"
@@ -11,4 +11,4 @@ dependencies = [
 ]
 
 [project.scripts]
-bitteragent = "bitteragent.__main__:cli"
+tinyagent = "tinyagent.__main__:cli"

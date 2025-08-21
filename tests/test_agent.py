@@ -1,9 +1,9 @@
 import asyncio
 
-from bitteragent.agent import Agent
-from bitteragent.tools import ToolRegistry
-from bitteragent.native_tools.shell import ShellTool
-from bitteragent.providers.base import Provider
+from tinyagent.agent import Agent
+from tinyagent.tools import ToolRegistry
+from tinyagent.native_tools.shell import ShellTool
+from tinyagent.providers.base import Provider
 
 
 class DummyProvider(Provider):
