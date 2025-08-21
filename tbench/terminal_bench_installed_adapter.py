@@ -64,9 +64,9 @@ class TinyAgentInstalledAdapter(AbstractInstalledAgent):
         """Commands to run the agent with the given task instruction."""
         escaped_instruction = shlex.quote(instruction)
         
-        # Run TinyAgent directly with the instruction
+        # Run TinyAgent directly with the instruction using the 'run' command
         run_agent_command = TerminalCommand(
-            command=f"python -m tinyagent.cli --task {escaped_instruction}",
+            command=f"python -m tinyagent run {escaped_instruction}",
             min_timeout_sec=0.0,
             max_timeout_sec=float("inf"),
             block=True,

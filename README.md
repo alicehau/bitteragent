@@ -212,19 +212,19 @@ cp .env.example .env
 
 ```bash
 # Interactive chat
-uv run tinyagent chat
+uv run python -m tinyagent chat
 
 # Run single command
-uv run tinyagent run "Create a Python hello world script"
+uv run python -m tinyagent run "Create a Python hello world script"
 
 # List available tools
-uv run tinyagent tools
+uv run python -m tinyagent tools
 
 # With specific model
-uv run tinyagent chat --model claude-3-opus-20240229
+uv run python -m tinyagent chat --model claude-3-opus-20240229
 
 # With custom system prompt
-uv run tinyagent chat --system-prompt ./custom-prompt.md
+uv run python -m tinyagent chat --system-prompt ./custom-prompt.md
 ```
 
 ## Configuration

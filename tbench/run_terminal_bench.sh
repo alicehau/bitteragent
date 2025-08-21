@@ -58,6 +58,7 @@ echo "Model: $MODEL"
 echo "Adapter: $ADAPTER_TYPE"
 
 tb run \
+    --dataset terminal-bench-core==head \
     --agent-import-path "$ADAPTER_PATH" \
     --model "$MODEL" \
     --task-id "$TASK_ID" \

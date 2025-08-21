@@ -114,17 +114,16 @@ class TinyAgentAdapter(BaseAgent):
         # Register the tmux shell tool
         registry.register(TmuxShellTool(session))
         
-        # Also register file operation tools
-        registry.register(ReadFileTool())
-        registry.register(WriteFileTool())
-        registry.register(EditFileTool())
+        # Don't register file operation tools - force everything through bash
+        # This ensures all operations happen in the container, not locally
         
         # Create system prompt
         system_prompt = f"""You are an AI assistant helping to complete a task in a terminal environment.
         
 Task: {instruction}
 
-You have access to bash commands and file operations. Complete the task by using the available tools.
+You have access to bash commands through the 'bash' tool. Use bash commands to complete the task.
+For file operations, use bash commands like 'echo', 'cat', 'touch', etc.
 Be efficient and direct in your approach."""
         
         # Create agent
