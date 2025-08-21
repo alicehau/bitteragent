@@ -29,17 +29,31 @@ class AnthropicProvider(Provider):
         self.model = model
         self.max_retries = max_retries
         self.text_callback = text_callback
+        # Track token usage
+        self.total_input_tokens = 0
+        self.total_output_tokens = 0
 
     async def complete(self, messages: List[Dict[str, Any]], tools: List[Dict[str, Any]] | None = None) -> Dict[str, Any]:
         last_exc: Exception | None = None
         for attempt in range(self.max_retries):
             try:
+                # Extract system message if present
+                system_message = None
+                filtered_messages = []
+                for msg in messages:
+                    if msg.get("role") == "system":
+                        system_message = msg.get("content", "")
+                    else:
+                        filtered_messages.append(msg)
+                
                 # Call Anthropic API
                 kwargs = {
                     "model": self.model,
-                    "messages": messages,
+                    "messages": filtered_messages,
                     "max_tokens": 4096,
                 }
+                if system_message:
+                    kwargs["system"] = system_message
                 if tools:
                     kwargs["tools"] = tools
                 
@@ -86,12 +100,21 @@ class AnthropicProvider(Provider):
                                 current_tool_use = None
                                 current_tool_input_json = ""
                         elif event.type == "message_stop":
+                            # Track usage if available
+                            if hasattr(event, 'usage'):
+                                self.total_input_tokens += getattr(event.usage, 'input_tokens', 0)
+                                self.total_output_tokens += getattr(event.usage, 'output_tokens', 0)
                             break
                     
                     return {"content": content}
                 else:
                     # Non-streaming version
                     resp = await self.client.messages.create(**kwargs)
+                    
+                    # Track token usage
+                    if hasattr(resp, 'usage'):
+                        self.total_input_tokens += getattr(resp.usage, 'input_tokens', 0)
+                        self.total_output_tokens += getattr(resp.usage, 'output_tokens', 0)
                     
                     # Convert response content blocks to dictionary format
                     content = []
