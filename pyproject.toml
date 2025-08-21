@@ -1,15 +1,39 @@
 [project]
 name = "tinyagent"
 version = "0.1.0"
-description = "Minimal Python CLI agent"
-requires-python = ">=3.12"
+description = "Minimal Python CLI agent with native tools for shell execution and file operations"
+readme = "README.md"
+authors = [{name = "Alice Hau", email = "alice@example.com"}]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.11"
 dependencies = [
     "click",
     "rich",
     "python-dotenv",
     "anthropic",
+]
+
+[project.optional-dependencies]
+dev = [
     "terminal-bench>=0.2.17",
 ]
 
 [project.scripts]
 tinyagent = "tinyagent.__main__:cli"
+
+[project.urls]
+Homepage = "https://github.com/alicehau/tinyagent"
+Repository = "https://github.com/alicehau/tinyagent"
+Issues = "https://github.com/alicehau/tinyagent/issues"
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"

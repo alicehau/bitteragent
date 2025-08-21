@@ -8,7 +8,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BITTERAGENT_DIR="$(dirname "$SCRIPT_DIR")"
 
 # Default values
-TASK_ID="${1:-hello-world}"
+TASK_ID="${1:-git-workflow-hack}"
 MODEL="${2:-anthropic/claude-3-5-haiku-20241022}"
 
 # Allow user to set TERMINAL_BENCH_DIR or default to ../terminal-bench

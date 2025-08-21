@@ -7,14 +7,15 @@ echo "Installing TinyAgent..."
 apt-get update
 apt-get install -y python3 python3-pip git
 
-# Create a directory for TinyAgent installation
-INSTALL_DIR="/opt/tinyagent"
-mkdir -p $INSTALL_DIR
+# Install TinyAgent directly from GitHub (until published to PyPI)
+# Use --break-system-packages to override PEP 668 protection in containers
+pip3 install --break-system-packages "git+https://github.com/alicehau/tinyagent.git"
 
-# Clone the TinyAgent repository
-git clone https://github.com/alicehau/tinyagent.git $INSTALL_DIR
+# Alternative: When published to PyPI, use:
+# pip3 install --break-system-packages tinyagent
 
-# Install TinyAgent and its dependencies globally without changing directory
-pip install $INSTALL_DIR
+# Verify installation
+python3 -m pip show tinyagent || echo "Warning: TinyAgent module not found after installation"
+python3 -c "import tinyagent" || echo "Warning: Cannot import tinyagent module"
 
 echo "TinyAgent installation complete!"

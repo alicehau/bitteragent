@@ -1,0 +1,4 @@
+runs/
+*.log
+*.cast
+tb.lock

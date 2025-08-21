@@ -65,8 +65,9 @@ class TinyAgentInstalledAdapter(AbstractInstalledAgent):
         escaped_instruction = shlex.quote(instruction)
         
         # Run TinyAgent directly with the instruction using the 'run' command
+        # Try python3 first, fallback to python if not available
         run_agent_command = TerminalCommand(
-            command=f"python -m tinyagent run {escaped_instruction}",
+            command=f"(command -v python3 >/dev/null 2>&1 && python3 -m tinyagent run {escaped_instruction}) || python -m tinyagent run {escaped_instruction}",
             min_timeout_sec=0.0,
             max_timeout_sec=float("inf"),
             block=True,
