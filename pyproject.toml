@@ -1,0 +1,14 @@
+[project]
+name = "bitteragent"
+version = "0.1.0"
+description = "Minimal Python CLI agent"
+requires-python = ">=3.11"
+dependencies = [
+    "click",
+    "rich",
+    "python-dotenv",
+    "anthropic",
+]
+
+[project.scripts]
+bitteragent = "bitteragent.__main__:cli"
