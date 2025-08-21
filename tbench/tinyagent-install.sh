@@ -7,9 +7,9 @@ echo "Installing TinyAgent..."
 apt-get update
 apt-get install -y python3 python3-pip git
 
-# Install TinyAgent directly from GitHub (until published to PyPI)
+# Install TinyAgent directly from GitHub tbench branch (until published to PyPI)
 # Use --break-system-packages to override PEP 668 protection in containers
-pip3 install --break-system-packages "git+https://github.com/alicehau/tinyagent.git"
+pip3 install --break-system-packages "git+https://github.com/alicehau/tinyagent.git@tbench"
 
 # Alternative: When published to PyPI, use:
 # pip3 install --break-system-packages tinyagent
