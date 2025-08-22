@@ -16,22 +16,25 @@ class Agent:
         provider: Provider, 
         registry: ToolRegistry, 
         system_prompt: str | None = None,
-        tool_callback: Optional[Callable[[str, Dict[str, Any], ToolResult], None]] = None,
+        tool_callback: Optional[Callable[[str, Dict[str, Any], Optional[ToolResult]], None]] = None,
         text_callback: Optional[Callable[[str], None]] = None
     ) -> None:
         self.provider = provider
         self.registry = registry
+        self.system_prompt = system_prompt
         self.messages: List[Dict[str, Any]] = []
         self.tool_callback = tool_callback
         self.text_callback = text_callback
-        if system_prompt:
-            self.messages.append({"role": "system", "content": system_prompt})
 
     async def run(self, user_input: str) -> str:
         """Run a single-turn conversation handling tool calls."""
         self.messages.append({"role": "user", "content": user_input})
         while True:
-            response = await self.provider.complete(self.messages, self.registry.to_anthropic_schema())
+            # Prepare messages with system prompt if available
+            messages_with_system = self.messages.copy()
+            if self.system_prompt:
+                messages_with_system.insert(0, {"role": "system", "content": self.system_prompt})
+            response = await self.provider.complete(messages_with_system, self.registry.to_anthropic_schema())
             content = response.get("content", [])
             self.messages.append({"role": "assistant", "content": content})
             tool_calls = [c for c in content if c.get("type") == "tool_use"]

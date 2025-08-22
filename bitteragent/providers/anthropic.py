@@ -2,12 +2,11 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from typing import Any, Dict, List, Callable, Optional
 
-try:  # pragma: no cover - optional dependency
-    import anthropic
-except Exception:  # pragma: no cover - optional dependency
-    anthropic = None
+import anthropic
+
 
 from .base import Provider
 
@@ -20,11 +19,13 @@ class AnthropicProvider(Provider):
         api_key: str,
         model: str = "claude-sonnet-4-20250514",
         max_retries: int = 3,
-        timeout: int = 120,
+        timeout: int = 600,
         text_callback: Optional[Callable[[str], None]] = None,
     ) -> None:
         if anthropic is None:
-            raise RuntimeError("anthropic package not installed")
+            raise ImportError(
+                "anthropic package not installed. Install with: pip install anthropic"
+            )
         self.client = anthropic.AsyncAnthropic(api_key=api_key, timeout=timeout)
         self.model = model
         self.max_retries = max_retries
@@ -46,7 +47,6 @@ class AnthropicProvider(Provider):
                     else:
                         filtered_messages.append(msg)
                 
-                # Call Anthropic API
                 kwargs = {
                     "model": self.model,
                     "messages": filtered_messages,
@@ -92,7 +92,6 @@ class AnthropicProvider(Provider):
                             elif current_tool_use:
                                 # Parse the accumulated JSON for tool input
                                 try:
-                                    import json
                                     current_tool_use["input"] = json.loads(current_tool_input_json) if current_tool_input_json else {}
                                 except json.JSONDecodeError:
                                     current_tool_use["input"] = {}
@@ -119,13 +118,12 @@ class AnthropicProvider(Provider):
                     # Convert response content blocks to dictionary format
                     content = []
                     for block in resp.content:
-                        # Use block.model_dump() to get all attributes as dict
                         block_dict = block.model_dump()
                         content.append(block_dict)
                     
                     return {"content": content}
-            except Exception as exc:  # pragma: no cover - network errors
+            except Exception as exc:
                 last_exc = exc
                 if attempt < self.max_retries - 1:
                     await asyncio.sleep(2 ** attempt)
-        raise RuntimeError(f"Anthropic API call failed: {last_exc}") from last_exc
+        raise RuntimeError(f"Anthropic API call failed after {self.max_retries} attempts: {last_exc}") from last_exc

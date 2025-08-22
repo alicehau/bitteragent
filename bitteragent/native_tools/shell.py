@@ -46,6 +46,6 @@ class ShellTool(NativeTool):
                 return ToolResult(success=False, error="Command timed out")
             output = stdout.decode().strip()
             return ToolResult(success=True, output=output)
-        except Exception as exc:  # pragma: no cover - defensive
+        except Exception as exc:
             return ToolResult(success=False, error=str(exc))
 

@@ -1,9 +1,9 @@
 import asyncio
 
-from tinyagent.agent import Agent
-from tinyagent.tools import ToolRegistry
-from tinyagent.native_tools.shell import ShellTool
-from tinyagent.providers.base import Provider
+from bitteragent.agent import Agent
+from bitteragent.tools import ToolRegistry
+from bitteragent.native_tools.shell import ShellTool
+from bitteragent.providers.base import Provider
 
 
 class DummyProvider(Provider):
@@ -21,7 +21,7 @@ class DummyProvider(Provider):
                         "type": "tool_use",
                         "name": "shell",
                         "id": "1",
-                        "input": {"cmd": "echo hello"},
+                        "input": {"command": "echo hello"},
                     }
                 ]
             }
@@ -30,7 +30,7 @@ class DummyProvider(Provider):
 
 def test_shell_tool_execution():
     tool = ShellTool()
-    result = asyncio.run(tool.execute(cmd="echo test"))
+    result = asyncio.run(tool.execute(command="echo test"))
     assert result.success
     assert result.output.strip() == "test"
 

@@ -40,7 +40,7 @@ class ReadFileTool(NativeTool):
                 lines = f.readlines()
                 lines = lines[offset:offset + limit] if offset > 0 else lines[:limit]
             return ToolResult(success=True, output="".join(lines))
-        except Exception as exc:  # pragma: no cover
+        except Exception as exc:
             return ToolResult(success=False, error=str(exc))
 
 
@@ -68,7 +68,7 @@ class WriteFileTool(NativeTool):
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(content)
             return ToolResult(success=True, output="written")
-        except Exception as exc:  # pragma: no cover
+        except Exception as exc:
             return ToolResult(success=False, error=str(exc))
 
 
@@ -80,7 +80,7 @@ class EditFileTool(NativeTool):
         "properties": {
             "file_path": {
                 "type": "string",
-                "description": "The absolute path to the file to modify (must be absolute, not relative)"
+                "description": "The path to the file to modify (preferrably absolute path)"
             },
             "old_string": {
                 "type": "string",
@@ -122,5 +122,5 @@ class EditFileTool(NativeTool):
             count = content.count(old_string)
             replaced = count if replace_all else 1
             return ToolResult(success=True, output=f"Replaced {replaced} occurrence(s)")
-        except Exception as exc:  # pragma: no cover
+        except Exception as exc: 
             return ToolResult(success=False, error=str(exc))
