@@ -16,7 +16,7 @@ class TinyAgentInstalledAdapter(AbstractInstalledAgent):
     def name() -> str:
         return "tinyagent-installed"
     
-    def __init__(self, model_name: str = "claude-3-5-haiku-20241022", **kwargs):
+    def __init__(self, model_name: str = "claude-sonnet-4-20250514", **kwargs):
         """Initialize the TinyAgent adapter.
         
         Args:

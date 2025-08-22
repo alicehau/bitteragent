@@ -7,9 +7,23 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BITTERAGENT_DIR="$(dirname "$SCRIPT_DIR")"
 
-# Default values
-TASK_ID="${1:-git-workflow-hack}"
-MODEL="${2:-anthropic/claude-3-5-haiku-20241022}"
+# Parse arguments - all are optional
+TASK_ID=""
+MODEL="anthropic/claude-sonnet-4-20250514"
+TASK_FILTER=""
+
+# Process arguments
+if [ $# -ge 1 ] && [ -n "$1" ]; then
+    TASK_ID="$1"
+fi
+
+if [ $# -ge 2 ] && [ -n "$2" ]; then
+    MODEL="$2"
+fi
+
+if [ $# -ge 3 ] && [ -n "$3" ]; then
+    TASK_FILTER="$3"
+fi
 
 # Allow user to set TERMINAL_BENCH_DIR or default to ../terminal-bench
 TERMINAL_BENCH_DIR="${TERMINAL_BENCH_DIR:-$(cd "$BITTERAGENT_DIR/../terminal-bench" 2>/dev/null && pwd)}"
@@ -53,13 +67,31 @@ else
     ADAPTER_PATH="tbench.terminal_bench_adapter:TinyAgentAdapter"
 fi
 
-echo "Task: $TASK_ID"
 echo "Model: $MODEL"
 echo "Adapter: $ADAPTER_TYPE"
 
-tb run \
-    --dataset terminal-bench-core==head \
-    --agent-import-path "$ADAPTER_PATH" \
-    --model "$MODEL" \
-    --task-id "$TASK_ID" \
-    --n-concurrent 1
+# Build the tb run command
+TB_CMD="tb run --dataset terminal-bench-core==head --agent-import-path $ADAPTER_PATH --model $MODEL --n-concurrent 1"
+
+# Handle task filtering
+if [ -n "$TASK_FILTER" ]; then
+    if [ "$TASK_FILTER" = "easy" ]; then
+        echo "Getting list of easy tasks..."
+        EASY_TASKS=$(python3 "$SCRIPT_DIR/get_easy_tasks.py")
+        echo "Found easy tasks: $EASY_TASKS"
+        for task in $EASY_TASKS; do
+            TB_CMD="$TB_CMD --task-id $task"
+        done
+    else
+        echo "Unknown task filter: $TASK_FILTER"
+        exit 1
+    fi
+elif [ -n "$TASK_ID" ]; then
+    echo "Task ID: $TASK_ID"
+    TB_CMD="$TB_CMD --task-id $TASK_ID"
+else
+    echo "Running all tasks..."
+fi
+
+# Execute the command
+eval $TB_CMD

@@ -25,14 +25,14 @@ class ShellTool(NativeTool):
             },
             "timeout": {
                 "type": "number", 
-                "description": "Optional timeout in seconds (default: 30)",
-                "default": 30
+                "description": "Optional timeout in seconds (default: 300)",
+                "default": 300
             },
         },
         "required": ["command"],
     }
 
-    async def execute(self, command: str, timeout: float | None = 30, **_: Any) -> ToolResult:
+    async def execute(self, command: str, timeout: float | None = 300, **_: Any) -> ToolResult:
         try:
             proc = await asyncio.create_subprocess_shell(
                 command,
