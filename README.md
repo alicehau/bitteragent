@@ -65,12 +65,27 @@ A ultra-minimal, extensible Python CLI agent with native tools for shell executi
 
 ## Installation
 
+### Install from PyPI
+
+```bash
+# Install with pip
+pip install bitteragent
+
+# Or install with uv (faster)
+uv pip install bitteragent
+
+# Set up API key
+export ANTHROPIC_API_KEY=your-api-key-here
+```
+
+### Build from Source
+
 ```bash
 # Install uv if not already installed
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Clone the repository
-git clone https://github.com/yourusername/bitteragent.git
+git clone https://github.com/alicehau/bitteragent.git
 cd bitteragent
 
 # Install dependencies with uv
@@ -82,6 +97,27 @@ cp .env.example .env
 ```
 
 ## Usage Examples
+
+### If installed from PyPI
+
+```bash
+# Interactive chat
+bitteragent chat
+
+# Run single command
+bitteragent run "Create a Python hello world script"
+
+# List available tools
+bitteragent tools
+
+# With specific model
+bitteragent chat --model claude-sonnet-4-20250514
+
+# With custom system prompt
+bitteragent chat --system-prompt ./custom-prompt.md
+```
+
+### If built from source
 
 ```bash
 # Interactive chat
