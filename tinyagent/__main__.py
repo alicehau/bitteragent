@@ -7,10 +7,6 @@ from typing import Any, Dict, Optional
 
 import click
 from dotenv import load_dotenv
-from rich.console import Console
-from rich.panel import Panel
-from rich.syntax import Syntax
-from rich.logging import RichHandler
 
 from .agent import Agent
 from .tools import ToolRegistry, ToolResult
@@ -20,13 +16,10 @@ from .providers.anthropic import AnthropicProvider
 
 load_dotenv()
 
-console = Console()
-
-# Setup logging with Rich handler for pretty output
+# Setup simple logging
 logging.basicConfig(
     level=logging.ERROR,
-    format="%(message)s",
-    handlers=[RichHandler(console=console, show_time=False, show_path=False)]
+    format="%(message)s"
 )
 
 
@@ -34,44 +27,19 @@ def create_tool_callback() -> callable:
     """Create a callback function to display tool execution in real-time."""
     def tool_callback(tool_name: str, params: Dict[str, Any], result: Optional[ToolResult]) -> None:
         if result is None:
-            # Tool call starting
-            params_str = json.dumps(params, indent=2) if params else "{}"
-            console.print(f"\n[bold blue]🔧 Calling tool:[/bold blue] {tool_name}")
-            if params:
-                console.print(Panel(
-                    Syntax(params_str, "json", theme="monokai", line_numbers=False),
-                    title="Parameters",
-                    border_style="blue"
-                ))
-        else:
-            # Tool execution completed
-            if result.success:
-                console.print(f"[bold green]✅ Tool completed successfully[/bold green]")
-                if result.output:
-                    # Determine if output looks like code/structured data
-                    output = result.output.strip()
-                    if (output.startswith('{') and output.endswith('}')) or \
-                       (output.startswith('[') and output.endswith(']')):
-                        # JSON-like output
-                        console.print(Panel(
-                            Syntax(output, "json", theme="monokai", line_numbers=False),
-                            title="Result",
-                            border_style="green"
-                        ))
-                    elif '\n' in output and len(output) > 100:
-                        # Multi-line output
-                        console.print(Panel(
-                            output,
-                            title="Result",
-                            border_style="green"
-                        ))
-                    else:
-                        # Short output
-                        console.print(f"[green]Result: {output}[/green]")
+            # Tool call starting - be concise
+            params_str = json.dumps(params) if params else ""
+            if params_str:
+                print(f"{tool_name}: {params_str}")
             else:
-                console.print(f"[bold red]❌ Tool failed[/bold red]")
-                if result.error:
-                    console.print(f"[red]Error: {result.error}[/red]")
+                print(f"{tool_name}")
+        else:
+            # Tool execution completed - show failures and short outputs
+            if not result.success:
+                print(f"Tool call failed: {result.error}")
+            elif result.output and len(result.output.strip()) < 200:
+                # Only show short outputs inline
+                print(result.output.strip())
     
     return tool_callback
 
@@ -101,7 +69,7 @@ def run(prompt: str) -> None:
     provider = AnthropicProvider(api_key=api_key)
     agent = Agent(provider=provider, registry=build_registry(), tool_callback=create_tool_callback())
     result = asyncio.run(agent.run(prompt))
-    console.print(f"\n[bold]Agent:[/bold] {result}")
+    print(f"\nAgent: {result}")
 
 
 @cli.command()
@@ -114,28 +82,27 @@ def chat() -> None:
     provider = AnthropicProvider(api_key=api_key)
     agent = Agent(provider=provider, registry=build_registry(), tool_callback=create_tool_callback())
     
-    console.print("[bold]Starting chat session[/bold] (type 'exit' or 'quit' to end)")
-    console.print("-" * 50)
+    print("Starting chat session (type 'exit' or 'quit' to end)")
+    print("-" * 50)
     
     while True:
         try:
-            # Use rich console for consistent formatting
-            user_input = console.input("\n[bold cyan]You:[/bold cyan] ")
+            user_input = input("\nYou: ")
             
             if user_input.lower() in ["exit", "quit"]:
-                console.print("[bold]Goodbye![/bold]")
+                print("Goodbye!")
                 break
             
             if not user_input.strip():
                 continue
                 
             result = asyncio.run(agent.run(user_input))
-            console.print(f"\n[bold]Agent:[/bold] {result}")
+            print(f"\nAgent: {result}")
         except (KeyboardInterrupt, EOFError):
-            console.print("\n[bold]Goodbye![/bold]")
+            print("\nGoodbye!")
             break
         except Exception as e:
-            console.print(f"\n[bold red]Error:[/bold red] {e}")
+            print(f"\nError: {e}")
 
 
 @cli.command()
