@@ -1,0 +1,2 @@
+[console_scripts]
+tinyagent = tinyagent.__main__:cli
