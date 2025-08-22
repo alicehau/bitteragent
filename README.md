@@ -1,6 +1,6 @@
 # BitterAgent - Minimal Python CLI Agent
 
-A ultra-minimal, extensible Python CLI agent with native tools for shell execution and file operations.
+A ultra-minimal, extensible Python CLI agent with native tools for shell execution and file operations. This is intended to be the simplest implementation of an agent - a while loop over a model API - that will let us test and evaluate raw model performance on agentic tasks without disintermediation by agentic product features.
 
 ## Core Components
 
