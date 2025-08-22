@@ -58,5 +58,12 @@ async def run_tool(tool: Tool, params: Dict[str, Any]) -> ToolResult:
     """Run a tool and ensure it respects ToolResult structure."""
     try:
         return await tool.execute(**params)
+    except TypeError as exc:
+        # Handle missing required parameters more gracefully
+        error_msg = str(exc)
+        if "missing" in error_msg and "required" in error_msg:
+            # Extract the parameter name from the error message
+            return ToolResult(success=False, error=f"Missing required parameter(s): {error_msg}")
+        return ToolResult(success=False, error=str(exc))
     except Exception as exc:  # pragma: no cover - defensive
         return ToolResult(success=False, error=str(exc))
