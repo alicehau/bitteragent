@@ -14,18 +14,31 @@ class ReadFileTool(NativeTool):
     parameters = {
         "type": "object",
         "properties": {
-            "path": {"type": "string"},
-            "line_limit": {"type": "integer", "default": 1000},
+            "file_path": {
+                "type": "string",
+                "description": "The absolute path to the file to read (must be absolute, not relative)"
+            },
+            "limit": {
+                "type": "integer", 
+                "description": "Optional number of lines to read (default: 1000)",
+                "default": 1000
+            },
+            "offset": {
+                "type": "integer",
+                "description": "Optional line number to start reading from (default: 0)",
+                "default": 0
+            },
         },
-        "required": ["path"],
+        "required": ["file_path"],
     }
 
-    async def execute(self, path: str, line_limit: int = 1000, **_: Any) -> ToolResult:
-        if not os.path.exists(path):
+    async def execute(self, file_path: str, limit: int = 1000, offset: int = 0, **_: Any) -> ToolResult:
+        if not os.path.exists(file_path):
             return ToolResult(success=False, error="File not found")
         try:
-            with open(path, "r", encoding="utf-8") as f:
-                lines = f.readlines()[:line_limit]
+            with open(file_path, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+                lines = lines[offset:offset + limit] if offset > 0 else lines[:limit]
             return ToolResult(success=True, output="".join(lines))
         except Exception as exc:  # pragma: no cover
             return ToolResult(success=False, error=str(exc))
@@ -33,22 +46,26 @@ class ReadFileTool(NativeTool):
 
 class WriteFileTool(NativeTool):
     name = "write_file"
-    description = "Write content to file"
+    description = "Write content to a file (will overwrite existing file)"
     parameters = {
         "type": "object",
         "properties": {
-            "path": {"type": "string"},
-            "content": {"type": "string"},
-            "append": {"type": "boolean", "default": False},
+            "file_path": {
+                "type": "string",
+                "description": "The absolute path to the file to write (must be absolute, not relative)"
+            },
+            "content": {
+                "type": "string",
+                "description": "The content to write to the file"
+            },
         },
-        "required": ["path", "content"],
+        "required": ["file_path", "content"],
     }
 
-    async def execute(self, path: str, content: str, append: bool = False, **_: Any) -> ToolResult:
+    async def execute(self, file_path: str, content: str, **_: Any) -> ToolResult:
         try:
-            os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-            mode = "a" if append else "w"
-            with open(path, mode, encoding="utf-8") as f:
+            os.makedirs(os.path.dirname(file_path) or ".", exist_ok=True)
+            with open(file_path, "w", encoding="utf-8") as f:
                 f.write(content)
             return ToolResult(success=True, output="written")
         except Exception as exc:  # pragma: no cover
@@ -57,28 +74,53 @@ class WriteFileTool(NativeTool):
 
 class EditFileTool(NativeTool):
     name = "edit_file"
-    description = "Find and replace within a file"
+    description = "Perform exact string replacements in a file"
     parameters = {
         "type": "object",
         "properties": {
-            "path": {"type": "string"},
-            "find": {"type": "string"},
-            "replace": {"type": "string"},
-            "dry_run": {"type": "boolean", "default": False},
+            "file_path": {
+                "type": "string",
+                "description": "The absolute path to the file to modify (must be absolute, not relative)"
+            },
+            "old_string": {
+                "type": "string",
+                "description": "The exact text to replace (must match exactly including whitespace)"
+            },
+            "new_string": {
+                "type": "string",
+                "description": "The text to replace it with (must be different from old_string)"
+            },
+            "replace_all": {
+                "type": "boolean",
+                "description": "Replace all occurrences of old_string (default: false - replaces only first occurrence)",
+                "default": False
+            },
         },
-        "required": ["path", "find", "replace"],
+        "required": ["file_path", "old_string", "new_string"],
     }
 
-    async def execute(self, path: str, find: str, replace: str, dry_run: bool = False, **_: Any) -> ToolResult:
-        if not os.path.exists(path):
+    async def execute(self, file_path: str, old_string: str, new_string: str, replace_all: bool = False, **_: Any) -> ToolResult:
+        if not os.path.exists(file_path):
             return ToolResult(success=False, error="File not found")
+        if old_string == new_string:
+            return ToolResult(success=False, error="old_string and new_string cannot be the same")
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 content = f.read()
-            new_content = content.replace(find, replace)
-            if not dry_run:
-                with open(path, "w", encoding="utf-8") as f:
-                    f.write(new_content)
-            return ToolResult(success=True, output=new_content)
+            
+            if old_string not in content:
+                return ToolResult(success=False, error="old_string not found in file")
+            
+            if replace_all:
+                new_content = content.replace(old_string, new_string)
+            else:
+                new_content = content.replace(old_string, new_string, 1)
+            
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(new_content)
+            
+            count = content.count(old_string)
+            replaced = count if replace_all else 1
+            return ToolResult(success=True, output=f"Replaced {replaced} occurrence(s)")
         except Exception as exc:  # pragma: no cover
             return ToolResult(success=False, error=str(exc))
