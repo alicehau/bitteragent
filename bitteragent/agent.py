@@ -34,7 +34,7 @@ class Agent:
             messages_with_system = self.messages.copy()
             if self.system_prompt:
                 messages_with_system.insert(0, {"role": "system", "content": self.system_prompt})
-            response = await self.provider.complete(messages_with_system, self.registry.to_anthropic_schema())
+            response = await self.provider.complete(messages_with_system, self.provider.get_tools_schema(self.registry))
             content = response.get("content", [])
             self.messages.append({"role": "assistant", "content": content})
             tool_calls = [c for c in content if c.get("type") == "tool_use"]

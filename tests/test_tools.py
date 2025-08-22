@@ -65,13 +65,18 @@ def test_tool_registry_list():
     assert len(tools_list) == 2
 
 
-def test_tool_registry_to_anthropic_schema():
-    """Test converting tools to Anthropic schema."""
+def test_provider_get_tools_schema():
+    """Test provider converting tools to schema format."""
+    from bitteragent.providers.anthropic import AnthropicProvider
+    
+    # Create a mock provider (we'll use AnthropicProvider as example)
+    provider = AnthropicProvider(api_key="test-key")
+    
     registry = ToolRegistry()
     tool = MockTool()
     registry.register(tool)
     
-    schema = registry.to_anthropic_schema()
+    schema = provider.get_tools_schema(registry)
     
     assert len(schema) == 1
     assert schema[0]["name"] == "mock_tool"

@@ -13,12 +13,7 @@ A ultra-minimal, extensible Python CLI agent with native tools for shell executi
 - **ToolRegistry**: Manages tool registration and discovery
   - Register built-in tools on startup
   - Lookup tools by name
-  - **Format adapters** for different tool schemas:
-    - `to_anthropic_schema()`: Convert to Anthropic tool format
-    - `to_openai_schema()`: Convert to OpenAI function format
-    - `to_mcp_schema()`: Convert to MCP tool format
-    - `to_langchain_schema()`: Convert to LangChain tool format
-  - Extensible adapter pattern for new formats
+  - List available tools
 - **ToolResult**: Structured response from tool execution
   - `success`: Boolean status
   - `output`: Tool output/result
@@ -27,6 +22,7 @@ A ultra-minimal, extensible Python CLI agent with native tools for shell executi
 ### 2. Provider Interface
 - **Provider ABC**: Abstract base for LLM providers in `providers/base.py`
   - `complete(messages, tools)`: Generate completion with tool support
+  - `get_tools_schema(registry)`: Convert tools to provider-specific format
   - Provider-specific configuration
   - **Built-in retry logic** with exponential backoff
   - **Error handling** for rate limits, timeouts, API errors
@@ -46,7 +42,7 @@ A ultra-minimal, extensible Python CLI agent with native tools for shell executi
   - **System prompt loading** from `system.md` file
 - **Tool Execution Loop**
   - Parse tool calls from model
-  - **Parallel execution** for multiple tool calls (using asyncio/threads)
+  - Parallel execution for multiple tool calls
   - Execute tools with parameters
   - Return results to model in order
 
@@ -62,8 +58,8 @@ A ultra-minimal, extensible Python CLI agent with native tools for shell executi
   - `run`: Execute single command
   - `tools`: List available tools
 - **Options**
-  - `--api-key`: Anthropic API key
-  - `--model`: Model selection (claude-3-opus, etc.)
+  - `--api-key`: Model API key
+  - `--model`: Model selection
   - `--system-prompt`: Path to system.md file (default: ./system.md if exists)
   - `--verbose`: Debug logging
 
@@ -98,7 +94,7 @@ uv run python -m bitteragent run "Create a Python hello world script"
 uv run python -m bitteragent tools
 
 # With specific model
-uv run python -m bitteragent chat --model claude-3-opus-20240229
+uv run python -m bitteragent chat --model claude-sonnet-4-20250514
 
 # With custom system prompt
 uv run python -m bitteragent chat --system-prompt ./custom-prompt.md
@@ -109,6 +105,26 @@ uv run python -m bitteragent chat --system-prompt ./custom-prompt.md
 ```bash
 # .env file
 ANTHROPIC_API_KEY=your-api-key-here
+```
+
+## Running Tests
+
+```bash
+# Install test dependencies
+pip install pytest
+
+# Run all tests
+pytest tests/
+
+# Run with verbose output
+pytest tests/ -v
+
+# Run a specific test file
+pytest tests/test_agent.py
+
+# Run with coverage (requires pytest-cov)
+pip install pytest-cov
+pytest tests/ --cov=bitteragent --cov-report=term-missing
 ```
 
 ## License

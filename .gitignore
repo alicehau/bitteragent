@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 .env
+.pypirc
 
 # Local tbench helper scripts (not for distribution)
 tbench/get_easy_tasks.py

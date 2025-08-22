@@ -24,10 +24,10 @@ From the bitteragent repository directory, run:
 ./tbench/run_terminal_bench.sh
 
 # Run a specific task
-./tbench/run_terminal_bench.sh simple-server
+./tbench/run_terminal_bench.sh hello-world
 
 # Run with a specific task and model
-./tbench/run_terminal_bench.sh simple-server anthropic/claude-3-5-sonnet-20241022
+./tbench/run_terminal_bench.sh hello-world anthropic/claude-sonnet-4-20250514
 ```
 
 ## How it Works

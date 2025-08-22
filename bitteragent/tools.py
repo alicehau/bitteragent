@@ -40,19 +40,6 @@ class ToolRegistry:
     def get(self, name: str) -> Optional[Tool]:
         return self.tools.get(name)
 
-    def to_anthropic_schema(self) -> List[Dict[str, Any]]:
-        """Return tools in Anthropic tool format."""
-        result = []
-        for tool in self.tools.values():
-            result.append(
-                {
-                    "name": tool.name,
-                    "description": tool.description,
-                    "input_schema": tool.parameters,
-                }
-            )
-        return result
-
     def list(self) -> List[str]:
         return list(self.tools.keys())
 
